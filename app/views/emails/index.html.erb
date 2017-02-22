@@ -1,0 +1,48 @@
+<p id="notice"><%= notice %></p>
+
+<h1><%=@user.name.capitalize%>s Emails</h1>
+<%= link_to 'New Email', new_user_email_path(@user) %>
+
+<h2>Inbox</h2>
+<table>
+  <thead>
+    <tr>
+      <th>From</th>
+      <th>Subject</th>
+      <th colspan="2"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @inbox.each do |email| %>
+      <tr>
+        <td><%= email.from %></td>
+        <td><%= link_to email.subject, email %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<h2>Sent</h2>
+<table>
+  <thead>
+    <tr>
+      <th>To</th>
+      <th>Subject</th>
+      <th colspan="2"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @sent.each do |email| %>
+      <tr>
+        <td><%= email.to %></td>
+        <td><%= link_to email.subject, email %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<br>
+<%= link_to 'New Email', new_user_email_path(@user) %>

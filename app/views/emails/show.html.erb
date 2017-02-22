@@ -1,0 +1,29 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>From:</strong>
+  <%= link_to @email.from, user_emails_path(@email.from) %>
+</p>
+
+<p>
+  <strong>To:</strong>
+  <%= link_to @email.to, user_emails_path(@email.to) %>
+</p>
+
+<p>
+  <strong>Subject:</strong>
+  <%= @email.subject %>
+</p>
+
+<p>
+  <strong>Body:</strong>
+  <%= @email.body %>
+</p>
+
+<p>
+  <strong>Source:</strong>
+  <pre>
+  <%= @email.source %>
+  </pre>
+</p>
+
