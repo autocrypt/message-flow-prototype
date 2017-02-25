@@ -6,6 +6,7 @@ class EmailsController < ApplicationController
   # GET /emails.json
   def index
     @inbox = Email.where(to: @user.name).all
+    process_incoming(@inbox)
     @sent = Email.where(from: @user.name).all
   end
 
@@ -19,14 +20,10 @@ class EmailsController < ApplicationController
     @email = Email.new from: (@user.name || '')
   end
 
-  # GET /emails/1/edit
-  def edit
-  end
-
   # POST /emails
   # POST /emails.json
   def create
-    @email = Email.new(email_params)
+    @email = Email.new email_params_with_source
 
     respond_to do |format|
       if @email.save
@@ -54,17 +51,32 @@ class EmailsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_email
-      @email = Email.find(params[:id])
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_email
+    @email = Email.find(params[:id])
+  end
 
-    def set_user
-      @user = User.new params[:user_id]
-    end
+  def set_user
+    @user = User.new params[:user_id]
+  end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def email_params
-      params.require(:email).permit(:from, :to, :subject, :body, :source)
+  def email_params_with_source
+    email_params.merge source: mail_from_params.to_s
+  end
+
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def email_params
+    params.require(:email).permit(:from, :to, :subject, :body)
+  end
+
+  def mail_from_params
+    AutocryptMailer.mail_with_header(email_params)
+  end
+
+  def process_incoming(mails)
+    autocrypt = Autocrypt.new(@user)
+    mails.each do |mail|
+      autocrypt.process_incoming mail.source
     end
+  end
 end
