@@ -1,15 +1,13 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  from: MyString
-  to: MyString
-  subject: MyString
-  body: MyText
-  source: MyText
+  from: alice
+  to: bob
+  subject: Subject
+  body: Some content
 
 two:
-  from: MyString
-  to: MyString
-  subject: MyString
-  body: MyText
-  source: MyText
+  from: bob
+  to: alice
+  subject: "Re: Subject"
+  body: Reply

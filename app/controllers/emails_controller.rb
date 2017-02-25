@@ -1,13 +1,13 @@
 class EmailsController < ApplicationController
-  before_action :set_email, only: [:show, :edit, :update, :destroy]
+  before_action :set_email, only: [:show]
   before_action :set_user, only: [:index, :new]
 
   # GET /emails
   # GET /emails.json
   def index
-    @inbox = Email.where(to: @user.name).all
+    @inbox = Email.to(@user.name).all
     process_incoming(@inbox)
-    @sent = Email.where(from: @user.name).all
+    @sent = Email.from(@user.name).all
   end
 
   # GET /emails/1
@@ -31,20 +31,6 @@ class EmailsController < ApplicationController
         format.json { render :show, status: :created, location: @email }
       else
         format.html { render :new }
-        format.json { render json: @email.errors, status: :unprocessable_entity }
-      end
-    end
-  end
-
-  # PATCH/PUT /emails/1
-  # PATCH/PUT /emails/1.json
-  def update
-    respond_to do |format|
-      if @email.update(email_params)
-        format.html { redirect_to @email, notice: 'Email was successfully updated.' }
-        format.json { render :show, status: :ok, location: @email }
-      else
-        format.html { render :edit }
         format.json { render json: @email.errors, status: :unprocessable_entity }
       end
     end

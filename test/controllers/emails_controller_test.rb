@@ -1,48 +1,29 @@
 require 'test_helper'
 
 class EmailsControllerTest < ActionDispatch::IntegrationTest
-  setup do
-    @email = emails(:one)
-  end
 
   test "should get index" do
-    get emails_url
+    get user_emails_url 'bob'
     assert_response :success
   end
 
   test "should get new" do
-    get new_email_url
+    get new_user_email_url 'bob'
     assert_response :success
   end
 
   test "should create email" do
+    @email = emails :one
     assert_difference('Email.count') do
-      post emails_url, params: { email: { body: @email.body, from: @email.from, source: @email.source, subject: @email.subject, to: @email.to } }
+      post emails_url, params: { email: { body: @email.body, from: @email.from, subject: @email.subject, to: @email.to } }
     end
-
     assert_redirected_to email_url(Email.last)
   end
 
   test "should show email" do
+    @email = emails :one
     get email_url(@email)
     assert_response :success
   end
 
-  test "should get edit" do
-    get edit_email_url(@email)
-    assert_response :success
-  end
-
-  test "should update email" do
-    patch email_url(@email), params: { email: { body: @email.body, from: @email.from, source: @email.source, subject: @email.subject, to: @email.to } }
-    assert_redirected_to email_url(@email)
-  end
-
-  test "should destroy email" do
-    assert_difference('Email.count', -1) do
-      delete email_url(@email)
-    end
-
-    assert_redirected_to emails_url
-  end
 end
