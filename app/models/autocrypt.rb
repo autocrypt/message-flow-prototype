@@ -24,20 +24,31 @@ class Autocrypt
 
   def process_incoming(mail)
     return unless initialized?
-    File.open '/tmp/tmp-mail', 'w' do |file|
+    File.open tmpfile, 'w' do |file|
       file.puts mail
     end
-    run 'process-incoming /tmp/tmp-mail'
+    run "process-incoming #{tmpfile}"
   end
 
   protected
 
   def run(command, &block)
-    command = "autocrypt --basedir '/tmp/autocrypt/#{name}' #{command}"
+    command = "autocrypt --basedir '#{basedir}' #{command}"
     if block_given?
       yield IO.popen(command, 'r+')
     else
       `#{command}`
     end
   end
+
+  def tmpfile
+    basedir + '.mail.tmp'
+  end
+
+  def basedir
+    AutocryptUi::DATA_PATH.join(name).tap do |path|
+      FileUtils.mkdir_p path
+    end
+  end
+
 end
