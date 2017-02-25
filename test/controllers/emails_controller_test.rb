@@ -16,7 +16,7 @@ class EmailsControllerTest < ActionDispatch::IntegrationTest
     assert_difference('Email.to("bob").size') do
       post emails_url, params: { email: email_params }
     end
-    last_email = Email.to('bob').max_by {|m| m.date}
+    last_email = Email.to('bob').max_by {|m| m.id}
     assert_redirected_to email_url(last_email)
   end
 

@@ -6,6 +6,10 @@ class Autocrypt
     @name = name.to_s
   end
 
+  def clear
+    FileUtils.rm_rf basedir
+  end
+
   def status
     run :status
   end
@@ -30,15 +34,29 @@ class Autocrypt
     run "process-incoming #{tmpfile}"
   end
 
+  def try_to_encrypt(attribs = {})
+    keys = [attribs[:to], attribs[:from]].map{|address| key(address)}
+    if keys.include? nil
+      attribs[:body]
+    else
+      encrypt attribs[:body], keys: keys
+    end
+  end
+
   protected
 
-  def run(command, &block)
+  def encrypt(plaintext, keys:)
+    plaintext + ' encrypted to ' + keys.to_sentence
+  end
+
+  def key(address)
+    return "own key of #{address}" if address == name
+    /^#{address}: key \w*/.match status
+  end
+
+  def run(command)
     command = "autocrypt --basedir '#{basedir}' #{command}"
-    if block_given?
-      yield IO.popen(command, 'r+')
-    else
-      `#{command}`
-    end
+    `#{command}`
   end
 
   def tmpfile

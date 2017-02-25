@@ -1,3 +1,5 @@
+require 'mail'
+
 class Email
   include ActiveModel::Model
 
