@@ -13,17 +13,32 @@ class EmailsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should create email" do
-    @email = emails :one
-    assert_difference('Email.count') do
-      post emails_url, params: { email: { body: @email.body, from: @email.from, subject: @email.subject, to: @email.to } }
+    assert_difference('Email.to("bob").size') do
+      post emails_url, params: { email: email_params }
     end
-    assert_redirected_to email_url(Email.last)
+    last_email = Email.to('bob').max_by {|m| m.date}
+    assert_redirected_to email_url(last_email)
   end
 
   test "should show email" do
-    @email = emails :one
-    get email_url(@email)
+    get email_url(email)
     assert_response :success
   end
 
+  protected
+
+  def email
+    Email.new(email_params).tap do |email|
+      email.save
+    end
+  end
+
+  def email_params
+    {
+      to: 'bob',
+      from: 'alice',
+      subject: 'subject',
+      body: 'body'
+    }
+  end
 end

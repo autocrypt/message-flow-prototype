@@ -25,7 +25,7 @@ class Autocrypt
   def process_incoming(mail)
     return unless initialized?
     File.open tmpfile, 'w' do |file|
-      file.puts mail
+      file.puts mail.to_s
     end
     run "process-incoming #{tmpfile}"
   end

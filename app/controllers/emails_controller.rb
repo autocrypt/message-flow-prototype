@@ -5,9 +5,9 @@ class EmailsController < ApplicationController
   # GET /emails
   # GET /emails.json
   def index
-    @inbox = Email.to(@user.name).all
+    @inbox = Email.to(@user.name)
     process_incoming(@inbox)
-    @sent = Email.from(@user.name).all
+    @sent = Email.from(@user.name)
   end
 
   # GET /emails/1
@@ -23,7 +23,7 @@ class EmailsController < ApplicationController
   # POST /emails
   # POST /emails.json
   def create
-    @email = Email.new email_params_with_source
+    @email = Email.new email_params
 
     respond_to do |format|
       if @email.save
@@ -46,23 +46,15 @@ class EmailsController < ApplicationController
     @user = User.new params[:user_id]
   end
 
-  def email_params_with_source
-    email_params.merge source: mail_from_params.to_s
-  end
-
   # Never trust parameters from the scary internet, only allow the white list through.
   def email_params
     params.require(:email).permit(:from, :to, :subject, :body)
   end
 
-  def mail_from_params
-    AutocryptMailer.mail_with_header(email_params)
-  end
-
-  def process_incoming(mails)
+  def process_incoming(inbox)
     autocrypt = Autocrypt.new(@user)
-    mails.each do |mail|
-      autocrypt.process_incoming mail.source
+    inbox.each do |mail|
+      autocrypt.process_incoming mail
     end
   end
 end
