@@ -11,7 +11,7 @@ class Autocrypt
   end
 
   def status
-    run :status
+    @status ||= run :status
   end
 
   def init
@@ -28,30 +28,54 @@ class Autocrypt
 
   def process_incoming(mail)
     return unless initialized?
-    File.open tmpfile, 'w' do |file|
+    File.open mail.filename, 'w' do |file|
       file.puts mail.to_s
     end
-    run "process-incoming #{tmpfile}"
+    run "process-incoming #{mail.filename}"
   end
 
-  def try_to_encrypt(attribs = {})
-    keys = [attribs[:to], attribs[:from]].map{|address| key(address)}
-    if keys.include? nil
-      attribs[:body]
-    else
-      encrypt attribs[:body], keys: keys
-    end
+  def prepare_outgoing(mail)
+    out = mail.dup
+    out.header[header_key] = header_value
+    return try_to_encrypt(out)
+  end
+
+
+  def try_to_encrypt(mail)
+    keys = [mail.to, mail.from].map{|address| key(address)}
+    encrypt mail, keys: keys unless keys.include? nil
+    mail
   end
 
   protected
 
-  def encrypt(plaintext, keys:)
-    plaintext + ' encrypted to ' + keys.to_sentence
+  def header_key
+    header.split(':', 2).first
+  end
+
+  def header_value
+    header.split(':', 2).last
+  end
+
+  def encrypt(mail, keys:)
+    return unless initialized?
+    File.open tmpfile(mail), 'w' do |file|
+      file.puts mail.body
+    end
+    mail.body = gpg tmpfile(mail), keys: keys
   end
 
   def key(address)
-    return "own key of #{address}" if address == name
-    /^#{address}: key \w*/.match status
+    match = match_key_in_status(address)
+    match && match[1]
+  end
+
+  def match_key_in_status(address)
+    if address == name
+      /^own-keyhandle: (\w*)/.match(status)
+    else
+      /^#{address}: key (\w*) /.match(status)
+    end
   end
 
   def run(command)
@@ -59,8 +83,8 @@ class Autocrypt
     `#{command}`
   end
 
-  def tmpfile
-    basedir + '.mail.tmp'
+  def tmpfile(mail)
+    basedir + ".mail.#{mail.id}.tmp"
   end
 
   def basedir
@@ -69,4 +93,9 @@ class Autocrypt
     end
   end
 
+  def gpg(file, keys:)
+    recipients = keys.join ' -r '
+    command = "gpg2 --homedir #{basedir + 'gpghome'} --encrypt -r #{recipients} --yes --batch --trust-model always --armor #{file}"
+    `#{command} && cat #{file}.asc`
+  end
 end

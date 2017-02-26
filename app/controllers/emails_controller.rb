@@ -23,7 +23,7 @@ class EmailsController < ApplicationController
   # POST /emails
   # POST /emails.json
   def create
-    @email = Email.new email_params
+    @email = autocrypt.prepare_outgoing(Email.new email_params)
 
     respond_to do |format|
       if @email.save
@@ -52,9 +52,12 @@ class EmailsController < ApplicationController
   end
 
   def process_incoming(inbox)
-    autocrypt = Autocrypt.new(@user)
     inbox.each do |mail|
       autocrypt.process_incoming mail
     end
+  end
+
+  def autocrypt
+    Autocrypt.new(@user)
   end
 end
