@@ -27,27 +27,42 @@ class Autocrypt
   end
 
   def process_incoming(mail)
-    return unless initialized?
-    File.open mail.filename, 'w' do |file|
-      file.puts mail.to_s
-    end
-    run "process-incoming #{mail.filename}"
+    extract_keys(mail)
   end
 
   def prepare_outgoing(mail)
-    out = mail.dup
-    out.header[header_key] = header_value
-    return try_to_encrypt(out)
+    return mail unless initialized?
+    mail.dup.tap do |out|
+      out.header[header_key] = header_value
+      out.body = encrypt out, keys: keys(out)
+    end
   end
 
-
-  def try_to_encrypt(mail)
-    keys = [mail.to, mail.from].map{|address| key(address)}
-    encrypt mail, keys: keys unless keys.include? nil
-    mail
+  # Returns the decrypted body. Leaves mail untouched.
+  # Will return an empty string if the mail was not encrypted.
+  def decrypt(mail)
+    gpg_decrypt mail.path
   end
 
   protected
+
+  def encrypt(mail, keys:)
+    return unless initialized?
+    return if keys.include? nil
+    File.open tmpfile(mail), 'w' do |file|
+      file.puts mail.body
+    end
+    gpg_encrypt tmpfile(mail), keys: keys
+  end
+
+  def extract_keys(mail)
+    return unless initialized?
+    run "process-incoming #{mail.path}"
+  end
+
+  def keys(mail)
+    [mail.to, mail.from].map{|address| key(address)}
+  end
 
   def header_key
     header.split(':', 2).first
@@ -55,14 +70,6 @@ class Autocrypt
 
   def header_value
     header.split(':', 2).last
-  end
-
-  def encrypt(mail, keys:)
-    return unless initialized?
-    File.open tmpfile(mail), 'w' do |file|
-      file.puts mail.body
-    end
-    mail.body = gpg tmpfile(mail), keys: keys
   end
 
   def key(address)
@@ -93,9 +100,15 @@ class Autocrypt
     end
   end
 
-  def gpg(file, keys:)
+  def gpg_encrypt(file, keys:)
     recipients = keys.join ' -r '
     command = "gpg2 --homedir #{basedir + 'gpghome'} --encrypt -r #{recipients} --yes --batch --trust-model always --armor #{file}"
-    `#{command} && cat #{file}.asc`
+    `#{command} 2> #{Rails.root + 'log' + 'gpg.log'} && cat #{file}.asc`
   end
+
+  def gpg_decrypt(file)
+    command = "gpg2 --homedir #{basedir + 'gpghome'} --decrypt --armor #{file}"
+    `#{command} 2> #{Rails.root + 'log' + 'gpg.log'}`
+  end
+
 end

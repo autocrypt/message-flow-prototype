@@ -8,7 +8,7 @@ class Email
   include ActiveModel::Model
 
   delegate :subject, :to_s, :date, :header, :body=, to: :mail
-  attr_reader :id
+  attr_reader :id, :source, :path
 
   def self.to(recipient)
     Mailbox.new(recipient, 'inbox').map{|path| new path}
@@ -24,7 +24,9 @@ class Email
 
   def initialize(attribs_or_file = {})
     if attribs_or_file.is_a? String
+      @path = attribs_or_file
       @mail = Mail.read attribs_or_file
+      @source = @mail.to_s
       @id = mail.message_id.split('@').first
     else
       @mail = mail_from_params(attribs_or_file)
