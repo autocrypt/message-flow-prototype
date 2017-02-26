@@ -14,14 +14,15 @@ class EmailsControllerTest < ActionDispatch::IntegrationTest
 
   test "should create email" do
     assert_difference('Email.to("bob").size') do
-      post emails_url, params: { email: email_params }
+      post user_emails_url(email_params[:from]),
+        params: { email: email_params }
     end
     last_email = Email.to('bob').max_by {|m| m.id}
-    assert_redirected_to email_url(last_email)
+    assert_redirected_to user_email_url(email_params[:from], last_email)
   end
 
   test "should show email" do
-    get email_url(email)
+    get user_email_url(email.to, email)
     assert_response :success
   end
 

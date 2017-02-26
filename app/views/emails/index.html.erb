@@ -13,7 +13,7 @@
     <% @inbox.each do |email| %>
       <tr>
         <td><%= email.from.capitalize %></td>
-        <td><%= link_to email.subject, email %></td>
+        <td><%= link_to email.subject, [@user, email] %></td>
         <td><%= time_ago_in_words email.date %></td>
       </tr>
     <% end %>
@@ -36,8 +36,8 @@
   <tbody>
     <% @sent.each do |email| %>
       <tr>
-        <td><%= email.to %></td>
-        <td><%= link_to email.subject, email %></td>
+        <td><%= email.to.capitalize %></td>
+        <td><%= link_to email.subject, [@user, email] %></td>
         <td><%= time_ago_in_words email.date %></td>
       </tr>
     <% end %>
