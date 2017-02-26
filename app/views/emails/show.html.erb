@@ -1,29 +1,36 @@
 <p id="notice"><%= notice %></p>
 
-<p>
-  <strong>From:</strong>
-  <%= link_to @email.from, user_emails_path(@email.from) %>
-</p>
+<%= "decrypted" if @decrypted %>
+<br/>
+<div class="card">
+  <div class="card-block">
+    <h4 class="card-title">
+      <%= @email.subject %>
+    </h4>
+    <h6 class="card-subtitle mb-2 text-muted">
+      From:
+      <%= link_to @email.from, user_emails_path(@email.from) %>
+      To:
+      <%= link_to @email.to, user_emails_path(@email.to) %>
+    </h6>
+    <div class="lead">
+<%= simple_format(@decrypted || @email.body) %>
+    </div>
+  </div>
+</div>
 
-<p>
-  <strong>To:</strong>
-  <%= link_to @email.to, user_emails_path(@email.to) %>
-</p>
+<br/>
 
-<p>
-  <strong>Subject:</strong>
-  <%= @email.subject %>
-</p>
 
-<p>
-  <strong>Body:</strong>
-  <%= @email.body %>
+<button class="btn btn-secondary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+  Show Email Source
+</button>
 </p>
-
-<p>
-  <strong>Source:</strong>
-  <pre>
-  <%= @email.source %>
-  </pre>
-</p>
+<div class="collapse" id="collapseExample">
+  <div class="card card-block">
+    <pre>
+<%= @email.source %>
+    </pre>
+  </div>
+</div>
 

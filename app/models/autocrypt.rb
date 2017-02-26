@@ -34,7 +34,7 @@ class Autocrypt
     return mail unless initialized?
     mail.dup.tap do |out|
       out.header[header_key] = header_value
-      out.body = encrypt out, keys: keys(out)
+      out.body = encrypt(out, keys: keys(out)) || out.body
     end
   end
 
@@ -108,7 +108,8 @@ class Autocrypt
 
   def gpg_decrypt(file)
     command = "gpg2 --homedir #{basedir + 'gpghome'} --decrypt --armor #{file}"
-    `#{command} 2> #{Rails.root + 'log' + 'gpg.log'}`
+    out = `#{command} 2> #{Rails.root + 'log' + 'gpg.log'}`
+    return out if $?.exitstatus == 0
   end
 
 end

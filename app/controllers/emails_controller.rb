@@ -13,8 +13,7 @@ class EmailsController < ApplicationController
   # GET /emails/1
   # GET /emails/1.json
   def show
-    decrypted = autocrypt.decrypt(@email)
-    @email.body = decrypted if decrypted.present?
+    @decrypted = autocrypt.decrypt(@email)
   end
 
   # GET /emails/new
