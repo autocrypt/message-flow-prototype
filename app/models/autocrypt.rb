@@ -15,6 +15,16 @@ class Autocrypt
     @status ||= run :status
   end
 
+  def prefer_encrypt
+    if initialized?
+      /^prefer-encrypt: (yes|no|notset)$/.match(status)[1]
+    end
+  end
+
+  def prefer_encrypt=(val)
+    run 'set-prefer-encrypt', val
+  end
+
   def init
     run :init
   end
@@ -26,6 +36,7 @@ class Autocrypt
   def initialized?
     ! /Account directory .* not initialized/.match(status)
   end
+  alias_method :persisted?, :initialized?
 
   def process_incoming(mail)
     extract_keys(mail)
@@ -86,8 +97,8 @@ class Autocrypt
     end
   end
 
-  def run(command)
-    command = "autocrypt --basedir '#{basedir}' #{command}"
+  def run(*command)
+    command = "autocrypt --basedir '#{basedir}' #{command.join(' ')}"
     `#{command}`
   end
 
