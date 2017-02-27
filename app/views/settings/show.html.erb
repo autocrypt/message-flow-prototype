@@ -1,8 +1,0 @@
-<p id="notice"><%= notice %></p>
-
-<h2><%=@user%> Settings</h2>
-<%- if @autocrypt.initialized? %>
-  <%= render 'enabled' %>
-<%- else %>
-  <%= render 'disabled' %>
-<%- end %>

@@ -1,4 +1,4 @@
-class SettingsController < ApplicationController
+class AutocryptsController < ApplicationController
   before_action :set_user
   before_action :set_autocrypt
 

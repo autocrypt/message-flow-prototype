@@ -1,0 +1,74 @@
+<h2>Settings</h2>
+
+<div class="card card-block">
+  <h4 class="card-title">Autocrypt</h4>
+  <%= form_for @autocrypt, url: user_autocrypt_path(@user) do |f| %>
+    <div class="form-check">
+      <label class="form-check-label">
+        <%= f.check_box :initialized?, class: "form-check-input" %>
+        Enable Autocrypt
+        <p class="form-text text-muted">
+        Autocrypt enables others to send you encrypted email.
+        This email will only be readable in this client.
+        <br/>
+        </p>
+      </label>
+      <button class="btn btn-link card-link" type="button" data-toggle="collapse" data-target="#configureAutocrypt" aria-expanded="false" aria-controls="configureAutocrypt">
+        Configure Autocrypt...
+      </button>
+
+      <div id="configureAutocrypt" class="collapse">
+        <div class="card card-block">
+          <p>
+          Autocrypt can indicate in the mails you send whether you would like to receive encrypted email or not. This email can not be read by others or in other clients.</p>
+          <div class="form-check">
+            <label class="form-check-label">
+              <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1" checked>
+              I prefer encrypted email.
+              <p class="form-text text-muted">
+              Autocrypt indicates that you would like to
+              receive encrypted email.
+              </p>
+            </label>
+          </div>
+          <div class="form-check">
+            <label class="form-check-label">
+              <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="option2">
+              Pick based on my usage.
+              <p class="form-text text-muted">
+              Autocrypt tries to detect wether you use other clients. If not it
+              will encourage others to send you encrypted email.
+              </p>
+            </label>
+          </div>
+          <div class="form-check">
+            <label class="form-check-label">
+              <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios3" value="option3">
+              I prefer unencrypted email.
+              <p class="form-text text-muted">
+              Autocrypt indicates that you can receive
+              encrypted mail but prefer unencrypted. Use this option if you
+              also read your email in a different client.
+              </p>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  <%- end %>
+</div>
+
+<%- if @autocrypt.initialized? %>
+  <br/>
+  <button class="btn btn-secondary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+    Show Autocrypt Status
+  </button>
+  </p>
+  <div class="collapse" id="collapseExample">
+    <div class="card card-block">
+      <pre>
+<%= @autocrypt.status %>
+      </pre>
+    </div>
+  </div>
+<%- end %>

@@ -1,4 +1,5 @@
 class Autocrypt
+  include ActiveModel::Model
 
   attr_reader :name
 
