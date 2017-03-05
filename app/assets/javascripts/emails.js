@@ -1,44 +1,68 @@
-function updateEncryptCheckbox(text) {
-  var checkbox = $('#email_encrypt');
-  var enabledFor = checkbox.data('enabledFor').split(' ');
-  var defaultFor = checkbox.data('defaultFor').split(' ');
-  if (-1 < $.inArray(text, enabledFor)) {
-    checkbox.removeAttr("disabled");
-    checkbox.prop("checked", (-1 < $.inArray(text, defaultFor)) );
-  }
-  else
-  {
-    checkbox.prop("checked", false);
-    checkbox.attr("disabled", "disabled");
-  }
-}
+(function(){
 
-function warnEncryptCheckbox(val) {
-  $('#prefers-encrypted').hide();
-  $('#prefers-insecure').hide();
-  var checkbox = $('#email_encrypt');
-  var recipient = $('#email_to').val();
-  var warnFor = checkbox.data('warnFor').split(' ');
-  var defaultFor = checkbox.data('defaultFor').split(' ');
-  if (-1 < $.inArray(recipient, warnFor)) {
-    var defaultVal = (-1 < $.inArray(recipient, defaultFor));
-    if (defaultVal != val) {
-      if (defaultVal)
-      {
-        $('#prefers-encrypted').show();
-      }
-      else
-      {
-        $('#prefers-insecure').show();
+  function checkbox(){
+    return $('#email_encrypt');
+  }
+
+  function isEnabledFor(recipient){
+    if (checkbox()) {
+      var recipients = checkbox().data('enabledFor').split(' ');
+      return (-1 < $.inArray(recipient, recipients))
+    }
+  }
+
+  function isDefaultFor(recipient){
+    if (checkbox()) {
+      var recipients = checkbox().data('defaultFor').split(' ');
+      return (-1 < $.inArray(recipient, recipients))
+    }
+  }
+
+  function isWarnFor(recipient){
+    if (checkbox()) {
+      var recipients = checkbox().data('warnFor').split(' ');
+      return (-1 < $.inArray(recipient, recipients))
+    }
+  }
+
+  function updateEncryptCheckbox(recipient) {
+    $('#prefers-encrypted').hide();
+    $('#prefers-insecure').hide();
+    if (isEnabledFor(recipient)) {
+      checkbox().removeAttr("disabled");
+      checkbox().prop("checked", (isDefaultFor(recipient)) );
+    }
+    else
+    {
+      checkbox().prop("checked", false);
+      checkbox().attr("disabled", "disabled");
+    }
+  }
+
+  function warnEncryptCheckbox(val) {
+    $('#prefers-encrypted').hide();
+    $('#prefers-insecure').hide();
+    var recipient = $('#email_to').val();
+    if (isWarnFor(recipient)) {
+      var defaultVal = isDefaultFor(recipient);
+      if (defaultVal != val) {
+        if (defaultVal)
+        {
+          $('#prefers-encrypted').show();
+        }
+        else
+        {
+          $('#prefers-insecure').show();
+        }
       }
     }
   }
-}
 
-$(document).on('change', '#email_to', function(){
-  updateEncryptCheckbox( $(this).val() );
-});
+  $(document).on('change', '#email_to', function(){
+    updateEncryptCheckbox( $(this).val() );
+  });
 
-$(document).on('change', '#email_encrypt', function(){
-  warnEncryptCheckbox( $(this).prop('checked') );
-});
+  $(document).on('change', '#email_encrypt', function(){
+    warnEncryptCheckbox( $(this).prop('checked') );
+  });
+}).call(this);
