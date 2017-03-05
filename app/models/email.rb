@@ -9,6 +9,7 @@ class Email
 
   delegate :subject, :to_s, :date, :header, :body=, to: :mail
   attr_reader :id, :source, :path
+  attr_accessor :encrypt
 
   def self.to(recipient)
     Mailbox.new(recipient, 'inbox').map{|path| new path}

@@ -49,7 +49,9 @@ class EmailsController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def email_params
-    params.require(:email).permit(:from, :to, :subject, :body)
+    params.require(:email).
+      permit(:to, :subject, :body).
+      merge(from: @user)
   end
 
   def process_incoming(inbox)
