@@ -14,6 +14,7 @@
     <div class="lead">
 <%= simple_format(@decrypted || @email.body) %>
     </div>
+    <%= link_to 'Reply', new_user_email_path(@user, @reply_params) %>
   </div>
 </div>
 

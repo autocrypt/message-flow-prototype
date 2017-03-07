@@ -14,11 +14,19 @@ class EmailsController < ApplicationController
   # GET /emails/1.json
   def show
     @decrypted = autocrypt.decrypt(@email)
+    @reply_params = {
+      to: @email.from,
+      subject: 'Re: ' + @email.subject,
+      body: (@decrypted || @email.body).gsub(/^/, '> ')
+    }
   end
 
   # GET /emails/new
   def new
-    @email = Email.new from: (@user.name || '')
+    @email = Email.new from: (@user.name || ''),
+      to: params[:to],
+      subject: params[:subject],
+      body: params[:body]
   end
 
   # POST /emails
