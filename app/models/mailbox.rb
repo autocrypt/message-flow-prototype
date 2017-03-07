@@ -11,6 +11,7 @@ class Mailbox
     FileUtils.mkdir_p path
     @path = path
     @files = Dir.glob path + '*.eml'
+    @files.sort_by! {|file| test(?M, path + file).to_i * (-1) }
   end
 
   def store(email)
