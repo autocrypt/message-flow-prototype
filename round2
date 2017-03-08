@@ -1,0 +1,10 @@
+Composition Window:
+* only body is encrypted!
+* feedback for users without autocrypt.
+* encrypt button. (done)
+* You'll be able to encrypt once this user sends you mail from an autocrypt enabled device. (done)
+
+Settings:
+Disabled... please only enable autocrypt on one device (done)
+
+validations
