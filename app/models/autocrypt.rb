@@ -56,6 +56,10 @@ class Autocrypt
     gpg_decrypt mail.path
   end
 
+  def addresses_with_keys_available
+    status.scan(/^(.*): key \w* /).map { |m| m.first }
+  end
+
   protected
 
   def encrypt(mail, keys:)

@@ -3,16 +3,39 @@
 <div class="card card-block">
   <h4 class="card-title">Autocrypt</h4>
   <h6 class="card-subtitle text-muted">
-    Autocrypt allows exchanging encrypted email with other people who also have autocrypt enabled.
-    Encrypted email you receive can only be read by you in this application.
+    Autocrypt allows exchanging encrypted email.
   </h6>
   <%- unless @autocrypt.initialized? %>
     <%= button_to 'Enable Autocrypt...',
       user_autocrypt_path(@user),
-      class: 'btn card-link btn-link'
+      class: 'btn card-link btn-link',
+      data: {confirm: 'Autocrypt is still experimental. Please only activate it on one device for this email address!'}
     %>
 <%- else %>
-  <p class='card-text card-block'>Autocrypt is enabled.</p>
+  <p class='card-text card-block'>Autocrypt is enabled.<br/>
+  <%- if @autocrypt.addresses_with_keys_available.any? %>
+    You can send encrypted email to
+    <%= @autocrypt.addresses_with_keys_available.to_sentence %>.
+    <br/>
+    <a data-toggle="collapse" data-target="#encryptToOthers" aria-expanded="false" aria-controls="encryptToOthers" href='#'>
+      Encrypt to other contacts...
+    </a>
+  <%- else %>
+    <a data-toggle="collapse" data-target="#encryptToOthers" aria-expanded="false" aria-controls="encryptToOthers" href='#'>
+      Start encrypting to your contacts...
+    </a>
+  <%- end %>
+    <div id="encryptToOthers" class="collapse">
+      <ol>
+        <li> Send an email to the contact you want to encrypt to. </li>
+        <li> Tell them to enable autocrypt. Now they can encrypt to you. </li>
+        <li> Once you received an email they send with autocrypt enabled you can also encrypt to them. </li>
+      </ol>
+    </div>
+
+  </p>
+
+
   <a class="card-link" type="button" data-toggle="collapse" data-target="#configureAutocrypt" aria-expanded="false" aria-controls="configureAutocrypt" href='#'>
     Advanced Configuration...
   </a>
