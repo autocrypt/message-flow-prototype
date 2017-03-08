@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
 
-  resources :users, only: [] do
+  get '/', to: 'tests#new'
+  resources :users, only: [:create] do
     resource :autocrypt, only: [:create, :show, :update]
     resources :emails, only: [:index, :show, :new, :create]
   end

@@ -1,0 +1,7 @@
+Welcome to our little user test.
+
+What's your name?
+<%= form_for User.new do |f| %>
+  <%= f.text_field :name %>
+  <%= f.submit "Let's go..." %>
+<%- end %>
