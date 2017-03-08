@@ -1,5 +1,6 @@
 class EmailsController < ApplicationController
   before_action :set_user
+  before_action :set_autocrypt
   before_action :set_email, only: [:show]
 
   # GET /emails
@@ -13,7 +14,7 @@ class EmailsController < ApplicationController
   # GET /emails/1
   # GET /emails/1.json
   def show
-    @decrypted = autocrypt.decrypt(@email)
+    @decrypted = @autocrypt.decrypt(@email)
     @reply_params = {
       to: @email.from,
       subject: 'Re: ' + @email.subject,
@@ -32,7 +33,7 @@ class EmailsController < ApplicationController
   # POST /emails
   # POST /emails.json
   def create
-    @email = autocrypt.prepare_outgoing(Email.new email_params)
+    @email = @autocrypt.prepare_outgoing(Email.new email_params)
 
     respond_to do |format|
       if @email.save
@@ -66,11 +67,11 @@ class EmailsController < ApplicationController
 
   def process_incoming(inbox)
     inbox.each do |mail|
-      autocrypt.process_incoming mail
+      @autocrypt.process_incoming mail
     end
   end
 
-  def autocrypt
-    Autocrypt.new(@user)
+  def set_autocrypt
+    @autocrypt = Autocrypt.new(@user)
   end
 end

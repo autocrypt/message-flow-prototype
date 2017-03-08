@@ -42,7 +42,7 @@
   function warnEncryptCheckbox(val) {
     $('#prefers-encrypted').hide();
     $('#prefers-insecure').hide();
-    var recipient = $('#email_to').val();
+    var recipient = $('#email_to').val().toLowerCase();
     if (isWarnFor(recipient)) {
       var defaultVal = isDefaultFor(recipient);
       if (defaultVal != val) {
@@ -59,7 +59,7 @@
   }
 
   $(document).on('change', '#email_to', function(){
-    updateEncryptCheckbox( $(this).val() );
+    updateEncryptCheckbox( $(this).val().toLowerCase() );
   });
 
   $(document).on('change', '#email_encrypt', function(){

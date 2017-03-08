@@ -1,5 +1,56 @@
 <h1>New Email</h1>
 
-<%= render 'form', email: @email %>
+<%= form_for [@user, @email] do |f| %>
+  <% if @email.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(email.errors.count, "error") %> prohibited this email from being saved:</h2>
+
+      <ul>
+      <% email.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-group">
+    <%= f.label :to %>
+    <%= f.text_field :to, class: "form-control" %>
+  </div>
+
+  <div class="form-check">
+    <%= f.label :encrypt, class: "form-check-label" do %>
+      <%= f.check_box :encrypt,
+        class: "form-check-input",
+        data: {
+          enabled_for: @autocrypt.addresses_with_keys_available.map(&:downcase).join(' '),
+          default_for: [],
+          warn_for: []
+      }
+              -%>
+            Encrypt
+            <span id="prefers-encrypted" class="alert alert-warning" role="alert" style="display: none;">
+              <span>Recipient</span> prefers to receive <strong>encrypted</strong> email.
+            </span>
+            <span id="prefers-insecure" class="alert alert-warning" role="alert" style="display: none;">
+              <span>Recipient</span> prefers to receive <strong>insecure</strong> email. <small>They may not be able to read your email.</small>
+            </span>
+          <%- end %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :subject %>
+    <%= f.text_field :subject, class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :body %>
+    <%= f.text_area :body, class: "form-control" %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>
 
 <%= link_to 'Back', user_emails_path(@user.id) %>
