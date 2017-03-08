@@ -114,12 +114,12 @@ class Autocrypt
 
   def gpg_encrypt(file, keys:)
     recipients = keys.join ' -r '
-    command = "gpg2 --homedir #{basedir + 'gpghome'} --encrypt -r #{recipients} --yes --batch --trust-model always --armor #{file}"
+    command = "gpg --homedir #{basedir + 'gpghome'} --encrypt -r #{recipients} --yes --batch --trust-model always --armor #{file}"
     `#{command} 2> #{Rails.root + 'log' + 'gpg.log'} && cat #{file}.asc`
   end
 
   def gpg_decrypt(file)
-    command = "gpg2 --homedir #{basedir + 'gpghome'} --decrypt --armor #{file}"
+    command = "gpg --homedir #{basedir + 'gpghome'} --decrypt --armor #{file}"
     out = `#{command} 2> #{Rails.root + 'log' + 'gpg.log'}`
     return out if $?.exitstatus == 0
   end
