@@ -7,6 +7,9 @@ class AutocryptsController < ApplicationController
 
   def create
     @autocrypt.init
+    Email.to(@user.name).each do |mail|
+      @autocrypt.process_incoming mail
+    end
     redirect_to action: :show
   end
 

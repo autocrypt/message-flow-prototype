@@ -57,7 +57,7 @@ class Autocrypt
   end
 
   def addresses_with_keys_available
-    status.scan(/^(.*): key \w* /).map { |m| m.first }
+    status.scan(/^(.*): key \w* /).map { |m| m.first.capitalize }
   end
 
   protected
