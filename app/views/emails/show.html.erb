@@ -7,14 +7,16 @@
     </h4>
     <h6 class="card-subtitle mb-2 text-muted">
       From:
-      <%= link_to @email.from, user_emails_path(@email.from) %>
+      <%= link_to @email.from.capitalize, user_emails_path(@email.from) %>
       To:
-      <%= link_to @email.to, user_emails_path(@email.to) %>
+      <%= link_to @email.to.capitalize, user_emails_path(@email.to) %>
     </h6>
     <div class="lead">
 <%= simple_format(@decrypted || @email.body) %>
     </div>
-    <%= link_to 'Reply', new_user_email_path(@user, @reply_params) %>
+    <%- if @email.to == @user %>
+      <%= link_to 'Reply', new_user_email_path(@user, @reply_params) %>
+    <%- end %>
   </div>
 </div>
 

@@ -52,14 +52,16 @@ class EmailsController < ApplicationController
   end
 
   def set_user
-    @user = User.new params[:user_id]
+    @user = User.new params[:user_id].downcase
   end
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def email_params
     params.require(:email).
       permit(:to, :subject, :body).
-      merge(from: @user)
+      merge(from: @user.to_s.downcase).tap do |params|
+        params[:to] = params[:to].downcase
+      end
   end
 
   def process_incoming(inbox)
