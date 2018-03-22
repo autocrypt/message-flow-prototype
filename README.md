@@ -1,24 +1,5 @@
-# README
+# Message Flow Prototype
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Used at IFF 2017 to demo and discuss Autocrypt message flows and configuration settings.
 
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+**This repository is archived and unmaintained.**
